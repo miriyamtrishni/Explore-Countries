@@ -29,9 +29,7 @@ A full-stack web application that allows users to explore countries around the w
 - **Favorites System**: Save and manage your favorite countries.  
 - **Responsive Design**: Optimized for desktop and mobile via Tailwind CSS.  
 
-## Demo
 
-![App Screenshot](path/to/screenshot.png)
 
 ## Technologies Used
 
@@ -63,16 +61,16 @@ A full-stack web application that allows users to explore countries around the w
 
 ```bash
 # 1. Clone repo & install dependencies
-git clone https://github.com/your-username/countries-app.git
-cd countries-app/backend
+git clone replace with your url
+cd .../backend
 npm install
 
 # 2. Create .env file in backend/
 cat > .env << EOF
-PORT=8080
+PORT=...
 NODE_ENV=development
-MONGODB_URI=mongodb://localhost:27017/countriesApp
-JWT_SECRET=your_jwt_secret_key
+MONGODB_URI=...
+JWT_SECRET=...
 COOKIE_SECRET=your_cookie_secret
 CLIENT_URL=http://localhost:3000
 EOF
@@ -164,20 +162,7 @@ countries-app/
 4. **Push**: `git push origin feature/cool-feature`  
 5. Open a **Pull Request**.
 
----
+ -
 
-## License
-
-This project is licensed under the [MIT License](LICENSE).
-
----
-
-## Example PHP Snippet
-
-```php
-<?php
-// Example PHP script placeholder
-// (Not used in this Node/React project)
-echo "Countries Explorer App";
-?>
-```
+ 
+ 
