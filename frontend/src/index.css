@@ -1,3 +1,44 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  body {
+    @apply antialiased;
+  }
+
+  /* Dark mode styles */
+  .dark {
+    @apply bg-gray-900 text-white;
+  }
+
+  .dark input,
+  .dark select,
+  .dark textarea {
+    @apply bg-gray-800 border-gray-700 text-white;
+  }
+
+  .dark button {
+    @apply bg-gray-800 text-white border-gray-700;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply px-4 py-2 rounded-lg font-medium transition-colors duration-200;
+  }
+
+  .btn-primary {
+    @apply bg-primary-500 text-white hover:bg-primary-600 dark:bg-primary-600 dark:hover:bg-primary-700;
+  }
+
+  .btn-secondary {
+    @apply bg-secondary-500 text-white hover:bg-secondary-600 dark:bg-secondary-600 dark:hover:bg-secondary-700;
+  }
+
+  .input {
+    @apply w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 
+           bg-white dark:bg-gray-700 text-gray-900 dark:text-white
+           focus:outline-none focus:ring-2 focus:ring-primary-500;
+  }
+}

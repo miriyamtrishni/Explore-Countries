@@ -1,120 +1,96 @@
-import React, { useState, useEffect } from "react";
-import { Routes, Route, Link, useLocation } from "react-router-dom";
-import authService from "./services/auth.service";
+import React, { useState } from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { ThemeProvider } from './context/ThemeContext';
+import { AuthProvider } from './context/AuthContext';
+import { useTheme } from './context/ThemeContext';
+import { useAuth } from './context/AuthContext';
+import LoginForm from './components/LoginForm';
+import RegisterForm from './components/RegisterForm';
+import Home from './components/Home';
 
-// Import components
-import Login from "./components/Login";
-import Register from "./components/Register";
-import Home from "./components/Home";
-import Profile from "./components/Profile";
+// Auth form container component
+const AuthFormContainer = () => {
+  const [isLogin, setIsLogin] = useState(true);
+  const { user } = useAuth();
 
-const App = () => {
-  const [currentUser, setCurrentUser] = useState(undefined);
-  const location = useLocation();
-
-  useEffect(() => {
-    const user = authService.getCurrentUser();
-    if (user) {
-      setCurrentUser(user);
-    }
-  }, []);
-
-  const logOut = () => {
-    authService.logout();
-    setCurrentUser(undefined);
-  };
+  if (user) {
+    return <Navigate to="/" />;
+  }
 
   return (
-    <div>
-      <nav className="bg-gray-800">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex h-16 items-center justify-between">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <span className="text-white text-xl font-bold">Countries App</span>
-              </div>
-              <div className="hidden md:block">
-                <div className="ml-10 flex items-baseline space-x-4">
-                  <Link
-                    to="/"
-                    className={`${
-                      location.pathname === "/"
-                        ? "bg-gray-900 text-white"
-                        : "text-gray-300 hover:bg-gray-700 hover:text-white"
-                    } px-3 py-2 rounded-md text-sm font-medium`}
-                  >
-                    Home
-                  </Link>
-
-                  {currentUser && (
-                    <Link
-                      to="/profile"
-                      className={`${
-                        location.pathname === "/profile"
-                          ? "bg-gray-900 text-white"
-                          : "text-gray-300 hover:bg-gray-700 hover:text-white"
-                      } px-3 py-2 rounded-md text-sm font-medium`}
-                    >
-                      Profile
-                    </Link>
-                  )}
-                </div>
-              </div>
-            </div>
-            <div className="hidden md:block">
-              <div className="ml-4 flex items-center md:ml-6">
-                {currentUser ? (
-                  <div className="flex items-center">
-                    <span className="text-gray-300 mr-4">
-                      {currentUser.username}
-                    </span>
-                    <button
-                      onClick={logOut}
-                      className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
-                    >
-                      Logout
-                    </button>
-                  </div>
-                ) : (
-                  <div className="flex space-x-4">
-                    <Link
-                      to="/login"
-                      className={`${
-                        location.pathname === "/login"
-                          ? "bg-gray-900 text-white"
-                          : "text-gray-300 hover:bg-gray-700 hover:text-white"
-                      } px-3 py-2 rounded-md text-sm font-medium`}
-                    >
-                      Login
-                    </Link>
-                    <Link
-                      to="/register"
-                      className={`${
-                        location.pathname === "/register"
-                          ? "bg-gray-900 text-white"
-                          : "text-gray-300 hover:bg-gray-700 hover:text-white"
-                      } px-3 py-2 rounded-md text-sm font-medium`}
-                    >
-                      Sign Up
-                    </Link>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8">
+        <div>
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900 dark:text-white">
+            {isLogin ? 'Sign in to your account' : 'Create a new account'}
+          </h2>
         </div>
-      </nav>
-
-      <div className="container mx-auto mt-3">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/profile" element={<Profile />} />
-        </Routes>
+        {isLogin ? <LoginForm /> : <RegisterForm />}
+        <div className="text-center">
+          <button
+            onClick={() => setIsLogin(!isLogin)}
+            className="text-primary-500 hover:text-primary-600 dark:text-primary-400 dark:hover:text-primary-300"
+          >
+            {isLogin ? 'Need an account? Register' : 'Already have an account? Sign in'}
+          </button>
+        </div>
       </div>
     </div>
   );
 };
+
+// Protected route component
+const ProtectedRoute = ({ children }) => {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+      <div className="text-xl text-gray-900 dark:text-white">Loading...</div>
+    </div>;
+  }
+
+  if (!user) {
+    return <Navigate to="/auth" />;
+  }
+
+  return children;
+};
+
+// Main App content with theme toggle
+const AppContent = () => {
+  const { darkMode, toggleTheme } = useTheme();
+
+  return (
+    <div className={`min-h-screen transition-colors duration-200 ${darkMode ? 'dark bg-gray-900' : 'bg-gray-50'}`}>
+      <button
+        onClick={toggleTheme}
+        className="fixed top-4 right-4 p-2 rounded-lg bg-primary-500 text-white hover:bg-primary-600 transition-colors z-50"
+      >
+        {darkMode ? '🌞' : '🌙'}
+      </button>
+      <Routes>
+        <Route path="/auth" element={<AuthFormContainer />} />
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+              <Home />
+            </ProtectedRoute>
+          }
+        />
+      </Routes>
+    </div>
+  );
+};
+
+function App() {
+  return (
+    <ThemeProvider>
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
+    </ThemeProvider>
+  );
+}
 
 export default App;
